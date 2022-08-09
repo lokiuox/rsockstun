@@ -95,7 +95,7 @@ jobs:
         GOOS: darwin
     - uses: actions/upload-artifact@v2
       with:
-        name: rsockstun-linux-amd64
+        name: rsockstun-darwin-amd64
         path: rsockstun
   release-windows-386:
     name: release windows/386
