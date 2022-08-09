@@ -1,10 +1,10 @@
 name: Go
 
-on:
+on:  
   push:
-    branches:
-      - "master"
-
+    tags:
+      - '*'
+      
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
