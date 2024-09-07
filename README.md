@@ -17,14 +17,14 @@ Options:
     	Server certificate file prefix (default "server")
   -listen string
     	Listen address for client connections (default "0.0.0.0:8080")
-  -socks string
-    	Listen address for the SOCKS5 proxy (default "127.0.0.1:1080")
 
 CLIENT MODE:
 ./fsockstun client -connect <connectAddr> [-proxy <proxyURI>] [options]
 Options:
   -connect string
     	address:port of the server to connect to
+  -socks string
+    	Listen address for the SOCKS5 proxy (default "127.0.0.1:1080")
   -proxy string
     	URI of the proxy to use to connect to the server [optional]
   -proxyauth string
