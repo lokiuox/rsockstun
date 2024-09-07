@@ -21,6 +21,7 @@ func main() {
 	// Client parameters
 	clientFlags := flag.NewFlagSet("client", 0)
 	connect := clientFlags.String("connect", "", "address:port of the server to connect to")
+	serverName := clientFlags.String("servername", "", "the server name to use in the connection")
 	socks := clientFlags.String("socks", "127.0.0.1:1080", "Listen address for the SOCKS5 proxy")
 	proxy := clientFlags.String("proxy", "", "URI of the proxy to use to connect to the server [optional]")
 	proxyauthstring := clientFlags.String("proxyauth", "", "Proxy authentication in the format [Domain/]Username:Password [optional]")
@@ -113,7 +114,7 @@ func main() {
 		if *recn > 0 {
 			for i := 1; i <= *recn; i++ {
 				log.Printf("Connecting to the far end. Try %d of %d", i, *recn)
-				error1 := connectToServer(*connect, *proxy, *socks)
+				error1 := connectToServer(*connect, *proxy, *socks, *serverName)
 				log.Print(error1)
 				log.Printf("Sleeping for %d sec...", *rect)
 				tsleep := time.Second * time.Duration(*rect)
@@ -122,7 +123,7 @@ func main() {
 		} else {
 			for {
 				log.Printf("Reconnecting to the far end... ")
-				error1 := connectToServer(*connect, *proxy, *socks)
+				error1 := connectToServer(*connect, *proxy, *socks, *serverName)
 				log.Print(error1)
 				log.Printf("Sleeping for %d sec...", *rect)
 				tsleep := time.Second * time.Duration(*rect)
