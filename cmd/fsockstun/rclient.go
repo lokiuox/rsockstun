@@ -53,9 +53,12 @@ func getProxyConnection(proxyaddr string, connectaddr string) net.Conn {
 	return conn
 }
 
-func connectToServer(address string, proxy string, socks string) error {
+func connectToServer(address string, proxy string, socks string, serverName string) error {
 	conf := &tls.Config{
 		InsecureSkipVerify: true,
+	}
+	if serverName != "" {
+		conf.ServerName = serverName
 	}
 
 	var err error
