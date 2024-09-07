@@ -81,22 +81,28 @@ func clientListener(address string, certificate string) {
 
 			//Add connection to yamux
 			session, err = yamux.Server(conn, nil)
-		}
 
-		for {
-			stream, err := session.Accept()
-			log.Println("Acceping stream")
 			if err != nil {
+				log.Println(err)
+				fmt.Fprintf(os.Stderr, "yamux error detected.\n")
 				conn.Close()
-				fmt.Fprintf(os.Stderr, "Errors accepting stream!\n")
-			}
-			log.Println("Passing off to SOCKS")
-			go func() {
-				err = server.ServeConn(stream)
-				if err != nil {
-					log.Println(err)
+			} else {
+				for {
+					stream, err := session.Accept()
+					log.Println("Acceping stream")
+					if err != nil {
+						conn.Close()
+						fmt.Fprintf(os.Stderr, "Errors accepting stream!\n")
+					}
+					log.Println("Passing off to SOCKS")
+					go func() {
+						err = server.ServeConn(stream)
+						if err != nil {
+							log.Println(err)
+						}
+					}()
 				}
-			}()
+			}
 		}
 	}
 }
