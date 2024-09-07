@@ -64,7 +64,7 @@ func connectToServer(address string, proxy string, socks string, serverName stri
 	var err error
 	var conn net.Conn
 	var connp net.Conn
-	var newconn net.Conn
+	var session *yamux.Session
 
 	if proxy == "" {
 		log.Println("Connecting to far end")
@@ -83,7 +83,7 @@ func connectToServer(address string, proxy string, socks string, serverName stri
 				log.Printf("Error connecting: %v", err)
 				return err
 			}
-			newconn = net.Conn(conntls)
+			conn = net.Conn(conntls)
 		} else {
 			log.Println("Proxy connection NOT successful. Exiting")
 			return nil
@@ -91,24 +91,19 @@ func connectToServer(address string, proxy string, socks string, serverName stri
 	}
 
 	log.Println("Starting client")
-	if proxy == "" {
-		conn.Write([]byte(agentpassword))
-		session, err = yamux.Client(conn, nil)
-	} else {
-		newconn.Write([]byte(agentpassword))
-		time.Sleep(time.Second * 1)
-		session, err = yamux.Client(newconn, nil)
-	}
+	conn.Write([]byte(agentpassword))
+	time.Sleep(time.Second * 1)
+	session, err = yamux.Client(conn, nil)
 	if err != nil {
 		return err
 	}
 
-	socksListenerClient(socks, *session)
+	socksListenerClient(socks, session)
 	return err
 }
 
 // Catches clients and connects to yamux
-func socksListenerClient(address string, session yamux.Session) error {
+func socksListenerClient(address string, session *yamux.Session) error {
 	ln, err := net.Listen("tcp", address)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: cannot start SOCKS on %v\n", address)
@@ -117,28 +112,32 @@ func socksListenerClient(address string, session yamux.Session) error {
 	log.Printf("Listening for SOCKS connections on %v\n", address)
 	for {
 		conn, err := ln.Accept()
-		if err != nil {
-			return err
-		}
-
-		log.Println("Got a connection, opening a stream...")
-
-		stream, err := session.Open()
-		if err != nil {
-			return err
-		}
-
-		// connect both of conn and stream
 		go func() {
-			log.Println("Starting to copy conn to stream")
-			io.Copy(conn, stream)
-			conn.Close()
-		}()
-		go func() {
-			log.Println("Starting to copy stream to conn")
-			io.Copy(stream, conn)
-			stream.Close()
-			log.Println("Done copying stream to conn")
+			if err != nil {
+				log.Println("Accepting SOCKS stream error")
+				return
+			}
+
+			log.Println("Got a connection, opening a stream...")
+
+			stream, err := session.Open()
+			if err != nil {
+				log.Println("Opening SOCKS session error")
+				return
+			}
+
+			// connect both of conn and stream
+			go func() {
+				log.Println("Starting to copy conn to stream")
+				io.Copy(conn, stream)
+				conn.Close()
+			}()
+			go func() {
+				log.Println("Starting to copy stream to conn")
+				io.Copy(stream, conn)
+				stream.Close()
+				log.Println("Done copying stream to conn")
+			}()
 		}()
 	}
 }
