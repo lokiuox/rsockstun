@@ -1,4 +1,4 @@
-rsockstun
+fsockstun
 ======
 [![Go](https://github.com/lokiuox/rsockstun/actions/workflows/go.yml/badge.svg)](https://github.com/lokiuox/rsockstun/actions/workflows/go.yml)    
 Create a reverse SOCKS5 proxy via an SSL Tunnel, with support for HTTP proxies.    
@@ -8,10 +8,10 @@ Based on https://github.com/brimstone/rsocks
 Usage:
 ------
 ```
-rsockstun - reverse socks5 server/client
+fsockstun - reverse socks5 server/client
 
 SERVER MODE:
-./rsocktun server [-listen <listenAddr>] [-socks <socksAddr>] [options]
+./fsockstun server [-listen <listenAddr>] [-socks <socksAddr>] [options]
 Options:
   -cert string
     	Server certificate file prefix (default "server")
@@ -21,7 +21,7 @@ Options:
     	Listen address for the SOCKS5 proxy (default "127.0.0.1:1080")
 
 CLIENT MODE:
-./rsocktun client -connect <connectAddr> [-proxy <proxyURI>] [options]
+./fsockstun client -connect <connectAddr> [-proxy <proxyURI>] [options]
 Options:
   -connect string
     	address:port of the server to connect to
@@ -52,8 +52,8 @@ openssl req -new -x509 -keyout server.key -out server.crt -days 365 -nodes
 ## Compilation:
 ```
 Linux
-- git clone https://github.com/lokiuox/rsockstun
-- cd rsockstun
+- git clone https://github.com/lokiuox/fsockstun
+- cd fsockstun
 - go build
 
 Windows client:
@@ -62,10 +62,10 @@ Windows client:
 - optional: to compress exe - use any exe packer, ex: UPX
 
 launch server:
-./rsockstun -listen :8443 -socks 127.0.0.1:1080 -cert cert -agentpassword Password1234
+./fsockstun -listen :8443 -socks 127.0.0.1:1080 -cert cert -agentpassword Password1234
 
 launch client:
-./rsockstun -connect clientIP:8443 -agentpassword Password1234 -proxy proxy.domain.local:3128 -proxyauth Domain\userpame:userpass -useragent "Mozilla 5.0/IE Windows 10"
+./fsockstun -connect clientIP:8443 -agentpassword Password1234 -proxy proxy.domain.local:3128 -proxyauth Domain\userpame:userpass -useragent "Mozilla 5.0/IE Windows 10"
 
 Client connects to server and send agentpassword to authorize on server. If server does not receive agentpassword or reveive wrong pass from client (for example if spider or client browser connects to server ) then it send HTTP 301 redirect code to www.microsoft.com
 ```

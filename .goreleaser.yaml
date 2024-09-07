@@ -1,4 +1,4 @@
-project_name: rsockstun
+project_name: fsockstun
 
 before:
   hooks:
@@ -6,8 +6,8 @@ before:
 
 builds:
   -
-    main: ./cmd/rsockstun/
-    binary: rsockstun
+    main: ./cmd/fsockstun/
+    binary: fsockstun
     goos:
       - windows
       - linux
@@ -62,4 +62,4 @@ changelog:
 release:
   github:
     owner: lokiuox
-    name: rsockstun
+    name: fsockstun
