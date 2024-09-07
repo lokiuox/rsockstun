@@ -96,7 +96,7 @@ func clientListener(address string, certificate string) {
 						conn.Close()
 						fmt.Fprintf(os.Stderr, "Errors accepting stream!\n")
 						log.Println(err)
-						return
+						break
 					}
 					log.Println("Passing off to SOCKS")
 					go func() {
