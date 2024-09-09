@@ -67,7 +67,7 @@ func connectToServer(address string, proxy string, socks string, serverName stri
 	var session *yamux.Session
 	tryToReconnect := true
  
-	while (tryToReconnect) {
+	for tryToReconnect {
 	if proxy == "" {
 		log.Println("Connecting to far end")
 		conn, err = tls.Dial("tcp", address, conf)
@@ -115,7 +115,7 @@ func socksListenerClient(address string, session *yamux.Session) (boolean, error
 	}
 	log.Printf("Listening for SOCKS connections on %v\n", address)
 	shouldReturn := false
-	while(!shouldReturn) {
+	for !shouldReturn {
 		conn, err := ln.Accept()
 		go func() {
 			if err != nil {
