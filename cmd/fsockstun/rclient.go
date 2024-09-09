@@ -106,7 +106,7 @@ func connectToServer(address string, proxy string, socks string, serverName stri
 }
 
 // Catches clients and connects to yamux
-func socksListenerClient(address string, session *yamux.Session) (boolean, error) {
+func socksListenerClient(address string, session *yamux.Session) (bool, error) {
 	ln, err := net.Listen("tcp", address)
 	tryToReconnect := false
 	if err != nil {
