@@ -13,6 +13,7 @@ builds:
       - linux
       - darwin
       - freebsd
+      - android
     goarch:
       - amd64
       - 386
