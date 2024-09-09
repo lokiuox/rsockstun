@@ -114,7 +114,7 @@ func main() {
 		if *recn > 0 {
 			for i := 1; i <= *recn; i++ {
 				log.Printf("Connecting to the far end. Try %d of %d", i, *recn)
-				error1 := connectToServer(*connect, *proxy, *socks, *serverName)
+				error1 := startClient(*connect, *proxy, *socks, *serverName)
 				log.Print(error1)
 				log.Printf("Sleeping for %d sec...", *rect)
 				tsleep := time.Second * time.Duration(*rect)
@@ -123,7 +123,7 @@ func main() {
 		} else {
 			for {
 				log.Printf("Reconnecting to the far end... ")
-				error1 := connectToServer(*connect, *proxy, *socks, *serverName)
+				error1 := startClient(*connect, *proxy, *socks, *serverName)
 				log.Print(error1)
 				log.Printf("Sleeping for %d sec...", *rect)
 				tsleep := time.Second * time.Duration(*rect)
