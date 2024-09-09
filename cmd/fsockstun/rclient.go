@@ -65,7 +65,9 @@ func connectToServer(address string, proxy string, socks string, serverName stri
 	var conn net.Conn
 	var connp net.Conn
 	var session *yamux.Session
-
+	tryToReconnect := true
+ 
+	while (tryToReconnect) {
 	if proxy == "" {
 		log.Println("Connecting to far end")
 		conn, err = tls.Dial("tcp", address, conf)
@@ -98,19 +100,22 @@ func connectToServer(address string, proxy string, socks string, serverName stri
 		return err
 	}
 
-	socksListenerClient(socks, session)
+	tryToReconnect, err = socksListenerClient(socks, session)
+}
 	return err
 }
 
 // Catches clients and connects to yamux
-func socksListenerClient(address string, session *yamux.Session) error {
+func socksListenerClient(address string, session *yamux.Session) (boolean, error) {
 	ln, err := net.Listen("tcp", address)
+	tryToReconnect := false
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: cannot start SOCKS on %v\n", address)
-		return err
+		return tryToReconnect, err
 	}
 	log.Printf("Listening for SOCKS connections on %v\n", address)
-	for {
+	shouldReturn := false
+	while(!shouldReturn) {
 		conn, err := ln.Accept()
 		go func() {
 			if err != nil {
@@ -123,6 +128,8 @@ func socksListenerClient(address string, session *yamux.Session) error {
 			stream, err := session.Open()
 			if err != nil {
 				log.Println("Opening SOCKS session error")
+				shouldReturn = true
+				tryToReconnect = true
 				return
 			}
 
@@ -140,4 +147,5 @@ func socksListenerClient(address string, session *yamux.Session) error {
 			}()
 		}()
 	}
+	return tryToReconnect, nil
 }
